@@ -4,7 +4,9 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-check this when going for large countries
+open docs/index.html to read the book
+
+# check this when going for large countries
 
 https://git-lfs.com/
 

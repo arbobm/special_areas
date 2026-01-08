@@ -48,7 +48,7 @@ for (i in 1:length(countries_list)) {
   
   # Write
   write_file(lines_new, output)
-
+  
 }
 
 
@@ -58,6 +58,8 @@ for (i in 1:length(countries_list)) {
 
 # render doc with chapters
 
-# quarto::quarto_preview(browse = F, watch = F)
 
-quarto::quarto_render(output_format = 'html')
+
+# quarto::quarto_render(output_format = 'html')
+
+# find . -size +100M -printf '%P\n' >> .gitignore

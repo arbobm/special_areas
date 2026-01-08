@@ -21,7 +21,7 @@ library(showtext)
 
 ## settings
 # set country
-# 'Bangladesh' <- 'Argentina'
+# 'Bangladesh' <- 'Ecuador'
 
 # set colours
 background_colour <- '#faf7f2'

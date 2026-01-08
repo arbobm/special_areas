@@ -21,7 +21,7 @@ library(showtext)
 
 ## settings
 # set country
-# 'Cambodia' <- 'Argentina'
+# 'Cambodia' <- 'Ecuador'
 
 # set colours
 background_colour <- '#faf7f2'
