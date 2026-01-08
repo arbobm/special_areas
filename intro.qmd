@@ -1,0 +1,17 @@
+# Introduction
+
+## Protected areas (PAs)
+
+* mais ou menos seguem uma ordem hierarquica
+* VI veio depois da existencia da V numa revisao de categorias da IUCN (inicio dos anos 2000) - logo depois que o SNUC foi promulgado
+  * APA - categoria V
+  * RESEX - categoria VI
+  * APA + efetiva no Brasil
+
+It should be noted that IUCN’s members adopted a recommendation at the World Conservation Congress in Amman, Jordan in October 2000, which suggested that mining should not take place in IUCN category I–IV protected areas. Recommendation 2.82 includes a section that: *“Calls on all IUCN’s State members to prohibit by law, all exploration and extraction of mineral resources in protected areas corresponding to IUCN protected area management categories I–IV”*. The recommendation also includes a paragraph relating to category V and VI protected areas: *“in categories V and VI, exploration and localized extraction would be accepted only where the nature and extent of the proposed activities of the mining project indicate the compatibility of the project activities with the objectives of the protected areas”*. This is a recommendation and not in any way binding on governments; some currently do ban mining in categories I–IV protected areas and others do not.
+
+Weighting and Spatial Planning: The IUCN categories provide a framework for spatial planning by defining different levels of protection and management intensity. For example, areas designated as Category Ia or Ib might be prioritized for strict protection, while Category V areas might be integrated into broader land-use planning that balances conservation with sustainable development. Spatial planning can then utilize this information to determine where different types of activities are appropriate and to allocate resources accordingly.
+
+Although not intended to be hierarchical, the IUCN typology spans sites ranging from the largely natural to the more heavily modified, with category Ia (Strict Nature Reserve) and category Ib (Wilderness Area) the most natural, followed by category II (National Park) and category III (Natural Monument or Feature), then category IV (Habitat/Species Management Area) and VI (Protected Area with Sustainable use of Natural Resources) through to category V (Protected Landscape/Seascape) sites which have the least natural conditions of all [@iucncatsdoc2008]. There is also variation in how strictly sites are protected, with category I-IV sites more strictly protected than those in categories V and VI [@iucncatsdoc2008]. In all cases however, nature conservation must be the primary management objective in order to qualify as an IUCN Protected Area [@iucncatsdoc2008]. The Programme of Work on Protected Areas (PoWPA), called on Parties to the CBD to apply the IUCN definitions and categories to their protected areas [@dudleyetal2010].
+
+

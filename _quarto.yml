@@ -1,0 +1,48 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Special Areas for Bird Conservation"
+  subtitle: 'KBAs and Protect Areas'
+  # author: "Norah Jones"
+  date: today
+  date-format: 'DD MMM YYYY'
+  page-navigation: true
+  chapters:
+    - index.qmd
+    # - intro.qmd
+    - argentina.qmd
+    - bangladesh.qmd
+    - cambodia.qmd
+    - ecuador.qmd
+    - indonesia.qmd
+    - kazakhstan.qmd
+    - kyrgyzstan.qmd
+    - philippines.qmd
+    - turkmenistan.qmd
+    # - summary.qmd
+    - references.qmd
+
+bibliography: 
+  - references.bib
+  - wdpar.bib
+number-sections: false
+reference-location: margin
+citation-location: margin
+csl: templates/cambridge-journal-of-economics.csl
+
+format:
+  html:
+    code-fold: true
+    code-overflow: wrap
+    theme:
+      - cosmo
+      - templates/styles.scss
+
+execute: 
+  warning: false
+  error: false
+  comments: false
+  message: false
+

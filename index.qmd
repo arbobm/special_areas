@@ -1,0 +1,35 @@
+# Preface {.unnumbered}
+
+```{r}
+#| echo: false
+
+get_bib_keys <- function(bib_list) {
+  vapply(bib_list, function(entry) {
+    s <- paste(entry, collapse = "\n")  # combine lines
+    # Find @Type{key,
+    m <- regexpr("@[A-Za-z]+\\{\\s*([^,]+)\\s*,", s, perl = TRUE)
+    if (m[1] == -1) return(NA_character_)
+    # Extract the capture group (the key)
+    matches <- regmatches(s, m)
+    sub("^@[A-Za-z]+\\{\\s*([^,]+)\\s*,.*$", "\\1", matches, perl = TRUE)
+  }, character(1))
+}
+x <- knitr::write_bib('wdpar', 'wdpar.bib')
+
+# Example using your structure:
+  
+y <- get_bib_keys(x) 
+y_i <- y[-length(y)]
+y_f <- y[length(y)]
+cits <- paste0('@', y_i, ';', collapse = ' ')
+cits2 <- paste0('@', y_f)
+cits_f <- paste0('[', cits, ' ', cits2, ']')
+
+```
+
+- Protected areas `r cits_f`
+- Key Biodiveristy Areas [@kbas_set2025]
+
+
+
+

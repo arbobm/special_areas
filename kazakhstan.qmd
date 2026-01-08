@@ -1,0 +1,561 @@
+---
+title: Kazakhstan
+editor_options: 
+  chunk_output_type: console
+---
+
+
+```{r setup}
+# packages
+
+library(wdpar)
+library(sf)
+library(dplyr)
+library(leaflet)
+library(ggplot2)
+library(stringr)
+library(plotly)
+library(reactable)
+library(reactablefmtr)
+library(showtext)
+
+## settings
+# set country
+# 'Kazakhstan' <- 'Argentina'
+
+# set colours
+background_colour <- '#faf7f2'
+
+# set fonts
+font_add_google("Work Sans", family = "worksans")
+showtext_auto()
+
+
+# read base data
+gadm <- geodata::gadm(
+  country = 'Kazakhstan',
+  path = ".",
+  level = 0,
+  resolution = 1 # high
+) |>
+  st_as_sf() |>
+  janitor::clean_names()
+
+raw_pa_data <- wdpa_fetch(
+  x = 'Kazakhstan',
+  wait = FALSE,
+  download_dir = "../wdpar"
+) |>
+  janitor::clean_names()
+
+
+# raw_pa_data |>
+#   st_drop_geometry() |>
+#   count(realm)
+#
+# raw_pa_data |>
+#   filter(site_id == 198315) |>
+#   glimpse()
+
+basemap_leaflet <- leaflet() |>
+  addMapPane("background", zIndex = 0) |> # Level 1: bottom
+  addMapPane("rasters", zIndex = 1) |> # Level 2: middle
+  addMapPane("polygons", zIndex = 200) |> # Level 3: middle
+  addMapPane("polylines", zIndex = 300) |> # Level 3: middle
+  # addMapPane("rasters", zIndex = 100000) |>    # Level 3: middle
+  addMapPane("points", zIndex = 440) |> # Level 4: middle
+  addMapPane("labels", zIndex = 450) |> # Level 5: top
+
+  addProviderTiles(
+    providers$Esri.WorldStreetMap,
+    group = "Open Street Map",
+    options = pathOptions(pane = "background")
+  ) |>
+  addProviderTiles(
+    providers$Esri.WorldImagery,
+    group = "Satellite",
+    options = pathOptions(pane = "background")
+  ) |>
+  addPolygons(
+    data = gadm,
+    weight = 1.5,
+    fillOpacity = 0,
+    color = '#333333',
+    opacity = 1,
+    group = 'Country boundary',
+    label = ~ htmltools::htmlEscape(country),
+    options = pathOptions(pane = "polygons")
+  ) 
+
+```
+
+# Key Biodiversity Areas (KBAs)
+
+## first stats 
+
+```{r read-kbas}
+file_list <- list.files(
+  '../../base_gis/KBAsGlobal_2025_September_02',
+  pattern = '\\.shp$',
+  full.names = T
+)
+
+df_list <- list.files(
+  '../../base_gis/KBAsGlobal_2025_September_02',
+  pattern = '\\.xlsx$',
+  full.names = T
+)
+# readxl::excel_sheets(df_list)
+
+kbas_0 <- lapply(file_list, read_sf) |>
+  bind_rows() |>
+  janitor::clean_names()
+
+
+kbas <- kbas_0 |>
+  filter(country == 'Kazakhstan')
+
+
+df <- readxl::read_xlsx(df_list) |>
+  janitor::clean_names() |>
+  filter(sit_rec_id %in% kbas$sit_rec_id)
+
+
+kbas_1 <- kbas |>
+  left_join(df) |>
+  select(
+    sit_rec_id,
+    nat_name,
+    int_name,
+    kba_status,
+    ends_with('status'),
+    class,
+    taxon_id,
+    common_name,
+    scientific_name,
+    kba_criterias,
+    year
+  )
+
+kbas_2 <- kbas_1 |>
+  mutate(
+    class = str_to_title(class),
+    triggered_by_class = if_else(!is.na(kba_criterias), class, 'none'),
+    triggered_by_scinam = if_else(
+      !is.na(kba_criterias),
+      scientific_name,
+      'none'
+    )
+  )
+
+kba_3 <- kbas_2 |>
+  distinct(sit_rec_id, class, triggered_by_class, year) |>
+  arrange(class) |>
+  group_by(sit_rec_id) |>
+  summarise(
+    class = paste0(class, collapse = ', '),
+    triggered_by = paste0(triggered_by_class, collapse = ', '),
+    triggered_by_birds = if_else(str_detect(triggered_by, 'Aves'), 1, 0),
+    year = unique(year)
+  ) |>
+  mutate(
+    contain = case_when(
+      class == 'Aves' ~ 'Only birds',
+      str_detect(class, 'Aves') ~ 'Birds and others',
+      !str_detect(class, 'Aves') ~ 'No birds',
+
+      TRUE ~ 'check'
+    )
+  )
+
+
+kba_3$triggered_by <- str_remove_all(kba_3$triggered_by, 'none|, ')
+
+# kba_3 |>
+#   count(contain, triggered_by_birds)
+
+kbas_leaflet <- kbas_2 |>
+  mutate(
+    sci_name_class = paste0(scientific_name, ' (', class, ')'),
+    comm_name_class = paste0(common_name, ' (', class, ')')
+  ) |>
+  arrange(class) |>
+  # select(class, scientific_name, sci_name_class) |>
+  group_by(sit_rec_id, int_name, nat_name, kba_status, year) |>
+  summarise(
+    scientific_name = paste0(sci_name_class, collapse = ', '),
+    common_name = paste0(comm_name_class, collapse = ', ')
+  ) |>
+  left_join(kba_3) |>
+  ungroup() %>%
+  filter(st_geometry_type(.) != 'POINT') |>
+  st_cast('MULTIPOLYGON')
+
+
+kbas_leaflet_c <- kbas_leaflet |>
+  st_drop_geometry() |>
+  count(contain, triggered_by_birds, sort = T) |>
+  mutate(contain = forcats::as_factor(contain), n = as.integer(n))
+
+n_kbas <- length(unique(kbas_leaflet$sit_rec_id))
+
+
+n_kba_birds <- kbas_leaflet |>
+  st_drop_geometry() |>
+  filter(contain != 'No birds') |>
+  nrow()
+
+
+# kbas_leaflet_c |>
+#   ggplot() +
+#   aes(y = contain, x = n, fill = n) +
+#   geom_col() +
+#   theme_minimal()
+kbas_leaflet_c |>
+  mutate(
+    triggered_by_birds = if_else(triggered_by_birds == '1', 'Yes', 'No'),
+    triggered_by_birds = factor(triggered_by_birds, levels = c('Yes', 'No'))
+  ) |>
+  arrange(triggered_by_birds, contain) 
+  # ggplot() +
+  # aes(x = contain, y = n, fill = triggered_by_birds) +
+  # geom_col() +
+  # labs(x = NULL, y = 'Count') +
+
+  # scale_fill_manual('Triggered by birds?', values = c('#333333', '#d6d4cfff')) +
+  # # scale_fill_manual('Triggered by birds?', values = c('#7D804BFF', '#E6EEE0FF')) +
+  # theme_minimal() +
+  # theme(
+  #   legend.position = 'bottom',
+  #   plot.background = element_rect(fill = background_colour),
+  #   axis.title = element_text(family = 'worksans')
+  # )
+```
+
+::::: {.grid}
+
+:::: {.g-col-6}
+
+::: {.callout-note appearance="minimal"}
+
+### Total number of KBAs
+
+`r n_kbas` 
+
+:::
+    
+::::
+
+:::: {.g-col-6}
+
+::: {.callout-note appearance="minimal"}
+
+### Number of KBAs with Birds
+
+`r n_kba_birds`
+
+:::
+
+::::
+
+:::::
+
+```{r read-pas}
+
+
+# glimpse(raw_pa_data)
+# st_geometry_type(raw_pa_data) == 'MULTIPOLYGON'
+raw_pa_data_pols <- raw_pa_data |>
+  filter(st_geometry_type(raw_pa_data) == 'MULTIPOLYGON') |>
+  mutate(
+    iucn_cat = factor(
+      iucn_cat,
+      levels = c(
+        'Ia',
+        'Ib',
+        'II',
+        'III',
+        'IV',
+        'V',
+        'VI',
+        'Not Applicable',
+        'Not Reported',
+        'Not Assigned'
+      )
+    ),
+    realm = factor(realm, levels = c('Coastal', 'Marine', 'Terrestrial'))
+  )
+
+# raw_pa_data_pols$iucn_cat
+# raw_pa_data |>
+#   st_drop_geometry() |>
+#   count(status)
+```
+
+## KBAs map
+
+```{r kba-map}
+#| column: page
+# kbas_leaflet$contain |> unique() |> sort()
+
+kbas_leaflet <- kbas_leaflet |>
+  arrange(contain) |>
+  mutate(contain = forcats::as_factor(contain))
+
+
+pal_kbas <- colorFactor(
+  domain = levels(kbas_leaflet$contain),
+  palette = c('#2e6ba6', '#e53d3d', '#59de9e')
+)
+
+iucn_palette <- tribble(
+  ~id, ~cat, ~hex_colour,
+  'Ia', 'Ia Strict nature reserve', '#174721', 
+  'Ib', 'Ib Wilderness area', '#7AC141',
+  'II', 'II National park', '#5D873B',
+  'III', 'III Natural monument or feature', '#AFBD36',
+  'IV', 'IV Habitat/species management area', '#C8DF8D',
+  'V', 'V Protected landscape/seascape', '#15477C',
+  'VI', 'VI Protected area with sustainable use of natural resource', '#7EA1B5',
+  'Not Applicable', 'NA Not Applicable', '#894444',
+  'Not Assigned', 'NAS Not Assigned', '#E60000',
+  'Not Reported', 'NR Not Reported', '#898944'
+)
+
+iucn_palette <- iucn_palette |> 
+  filter(id %in% levels(raw_pa_data_pols$iucn_cat))
+
+pal <- colorFactor(
+  domain = levels(raw_pa_data_pols$iucn_cat),
+  palette = iucn_palette$hex_colour
+)
+# pal <- colorFactor(
+#   domain = levels(raw_pa_data_pols$iucn_cat),
+#   c(
+#     '#232021',
+#     '#426f41',
+#     '#59ba49',
+#     '#c1178d',
+#     '#feb016',
+#     '#e61e24'
+#   )
+# )
+
+basemap_leaflet |>
+  addPolygons(
+    data = kbas_leaflet,
+    fillOpacity = 1,
+    fillColor = ~ pal_kbas(contain),
+    stroke = TRUE,
+    color = '#333333',
+    weight = ~ (triggered_by_birds * 2) + 0.5,
+    opacity = 1,
+    group = 'KBAs',
+    # label = ~ htmltools::htmlEscape(desig_eng),
+    options = pathOptions(pane = "polygons"),
+    popup = paste0(
+      '<b>',
+      kbas_leaflet$int_name,
+      '</b>',
+      '</br>',
+      '<a href="https://www.keybiodiversityareas.org/site/factsheet/',
+      kbas_leaflet$sit_rec_id,
+      '/assessment", target="_blank">Factsheet</a>',
+      '</br>',
+      '</br>',
+      '<b>Groups: </b>',
+      kbas_leaflet$contain,
+      '</br>',
+      '<b>National site name: </b>',
+      kbas_leaflet$nat_name,
+      '</br>',
+      '<b>Triggered by: </b>',
+      kbas_leaflet$triggered_by,
+      '</br>',
+      '<b>Year of last assessment: </b>',
+      kbas_leaflet$year
+    )
+  ) |>
+
+  addPolygons(
+    data = raw_pa_data_pols,
+    weight = 0.5,
+    fillOpacity = 0.7,
+    fillColor = ~ pal(iucn_cat),
+    # stroke = FALSE,
+    color = '#333333',
+    opacity = 0.7,
+    group = 'Protected areas',
+    label = ~ htmltools::htmlEscape(desig_eng),
+    # label = ~ htmltools::htmlEscape(iucn_cat),
+    options = pathOptions(pane = "polygons"),
+    popup = paste0(
+      '<b>',
+      raw_pa_data_pols$name_eng,
+      '</b>',
+      '</br>',
+      '</br>',
+      '<b>Designation: </b>',
+      raw_pa_data_pols$desig_eng,
+      '</br>',
+      '<b>IUCN category: </b>',
+      raw_pa_data_pols$iucn_cat,
+      '</br>',
+      '<b>Realm: </b>',
+      raw_pa_data_pols$realm,
+      '</br>',
+      '<b>Status (year): </b>',
+      raw_pa_data_pols$status,
+      ' (',
+      raw_pa_data_pols$status_yr,
+      ')'
+    )
+  ) |>
+  addLegend(
+    data = kbas_leaflet,
+    pal = pal_kbas,
+    values = levels(kbas_leaflet$contain),
+    opacity = 0.9,
+    group = 'KBAs',
+    title = 'KBAs'
+  ) |>
+  addLegend(
+    data = raw_pa_data_pols,
+    pal = pal,
+    values = levels(raw_pa_data_pols$iucn_cat),
+    opacity = 0.9,
+    group = 'Protected areas',
+    title = "Protected areas </br> IUCN cats"
+  ) |>
+  addLayersControl(
+    baseGroups = c(
+      # "Topography",
+      "Open Street Map",
+      "Satellite"
+      
+      # "Terrain",
+    ),
+    overlayGroups = c(
+      'KBAs',
+      'Protected areas'
+    ),
+    options = layersControlOptions(collapsed = FALSE, position = "bottomright")
+  ) |>
+  hideGroup(c('Protected areas')) |>
+  addScaleBar(position = c("bottomleft"), options = scaleBarOptions()) 
+
+
+```
+
+# Protected Areas (PAs)
+
+## first stats 
+
+```{r}
+raw_pa_data_pols |>
+  st_drop_geometry() |> 
+  count(desig_eng) |> 
+  filter(str_detect(desig_eng, 'UNESCO-MAB'))
+```
+
+
+```{r pasdesig}
+#| fig-align: center
+#| column: page
+
+g_labels <- levels(raw_pa_data_pols$iucn_cat)[
+  length(levels(raw_pa_data_pols$iucn_cat)):1
+]
+n_desig <- raw_pa_data_pols |>
+  filter(!str_detect(desig_eng, 'UNESCO-MAB')) |>
+  pull(desig_eng) |>
+  unique() |>
+  length()
+pas_count <- raw_pa_data_pols |>
+  filter(!str_detect(desig_eng, 'UNESCO-MAB')) |>
+  st_drop_geometry() |>
+  count(iucn_cat, desig_eng, realm) |>
+  mutate(iucn_cat = factor(iucn_cat, levels = g_labels))
+
+palette_desig <- paletteer::paletteer_c("scico::roma", n = n_desig)
+# palette_desig <- paletteer::paletteer_c("viridis::viridis", n = n_desig)
+# palette_desig <- paletteer::paletteer_c("scico::batlow", n = n_desig)
+
+ggplotly(
+  pas_count |>
+    arrange(iucn_cat) |>
+    ggplot() +
+    aes(y = iucn_cat, x = n, fill = desig_eng) +
+    geom_col() +
+    labs(y = 'IUCN categories', x = 'Count') +
+    scale_fill_manual(
+      values = palette_desig,
+      # labels = \(x) stringr::str_wrap(x, width = 32),
+      # 'Designation'
+    ) +
+    theme_minimal() +
+    theme(
+      legend.position = 'none',
+      plot.background = element_rect(fill = background_colour),
+      axis.title = element_text(family = 'worksans')
+    ) +
+    facet_wrap(~realm, scales = 'free')
+) 
+```
+
+```{r} 
+select(iucn_palette, -hex_colour)
+```
+
+```{r pa-tab}
+#| out-align: center
+#| column: page
+
+
+colours_desig <- tibble(palette_desig, desig = sort(unique(pas_count$desig_eng)))
+prep <- colours_desig |>
+  select(colour = palette_desig, desig_eng = desig) |> 
+  right_join(pas_count)
+
+prep |> 
+  reactable(
+    showSortable = T,
+    defaultSorted = list(n = 'desc'),
+    searchable = TRUE,
+    defaultPageSize = 20,
+    showPageSizeOptions = TRUE,
+    pageSizeOptions = c(10, 20, 50, 100, nrow(pas_count)),
+    fullWidth = F,
+    columns = list(
+      colour = colDef(
+        sortable = F,
+        name = '',
+        maxWidth = 100,
+        style = function(value) {
+          colour <- value
+          list(background = colour, color = colour)
+        }
+      ),
+      desig_eng = colDef(
+        name = 'Designation',
+        minWidth = 400
+      ),
+      realm = colDef(
+        name = 'Realm'
+      ),
+      iucn_cat = colDef(
+        name = 'IUCN (cat)',
+        minWidth = 150
+      ),
+      n = colDef(
+        name = 'Count'
+      )
+    )
+  )
+
+
+
+
+```
+
+
