@@ -60,4 +60,4 @@ for (i in 1:length(countries_list)) {
 
 # quarto::quarto_preview(browse = F, watch = F)
 
-# quarto::quarto_render(output_format = 'html')
+quarto::quarto_render(output_format = 'html')

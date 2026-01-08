@@ -16,7 +16,7 @@ book:
     - bangladesh.qmd
     - cambodia.qmd
     - ecuador.qmd
-    - indonesia.qmd
+    # - indonesia.qmd
     - kazakhstan.qmd
     - kyrgyzstan.qmd
     - philippines.qmd
