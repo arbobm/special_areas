@@ -13,13 +13,13 @@ book:
     - index.qmd
     # - intro.qmd
     - argentina.qmd
+    - philippines.qmd
     - bangladesh.qmd
     - cambodia.qmd
     - ecuador.qmd
     # - indonesia.qmd
     - kazakhstan.qmd
     - kyrgyzstan.qmd
-    - philippines.qmd
     - turkmenistan.qmd
     # - summary.qmd
     - references.qmd
