@@ -342,11 +342,11 @@
   {
     "objectID": "news.html",
     "href": "news.html",
-    "title": "News",
+    "title": "📰 News",
     "section": "",
-    "text": "Last updates\n\n\nTo-do list\n\nTables aesthetic\nMake protected areas map update when filtering its table\nHow to deploy site for big countries (eg. Indonesia)",
+    "text": "Last updates\n\n\nTo-do list\n\nTables aesthetic\nMake protected areas map update when filtering its table\nHow to deploy site for big countries (eg. Indonesia)\nadd number of KBAs sensitive sites to each country",
     "crumbs": [
-      "<span class='chapter-number'>9</span>  <span class='chapter-title'>News</span>"
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>📰 News</span>"
     ]
   }
 ]
