@@ -338,5 +338,15 @@
     "crumbs": [
       "References"
     ]
+  },
+  {
+    "objectID": "news.html",
+    "href": "news.html",
+    "title": "News",
+    "section": "",
+    "text": "Last updates\n\n\nTo-do list\n\nTables aesthetic\nMake protected areas map update when filtering its table\nHow to deploy site for big countries (eg. Indonesia)",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>News</span>"
+    ]
   }
 ]
