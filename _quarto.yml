@@ -46,4 +46,8 @@ execute:
   error: false
   comments: false
   message: false
+  
+comments:
+  giscus: 
+    repo: arbobm/special_areas
 
