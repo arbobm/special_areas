@@ -4,6 +4,8 @@ title: "📰 News"
 
 # Last updates
 
+- Added comments and reaction section (12/01/2026)
+
 
 # To-do list
 

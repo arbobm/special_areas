@@ -6,8 +6,6 @@ book:
   title: "Special Areas for Bird Conservation"
   subtitle: 'KBAs and Protect Areas'
   # author: "Norah Jones"
-  date: today
-  date-format: 'DD MMM YYYY'
   page-navigation: true
   chapters:
     - index.qmd
@@ -32,6 +30,10 @@ number-sections: false
 reference-location: margin
 citation-location: margin
 csl: templates/cambridge-journal-of-economics.csl
+date: '18 December 2025'
+date-format: DD-MM-YYYY
+date-modified: today
+published-title: Created
 
 format:
   html:
@@ -48,6 +50,7 @@ execute:
   message: false
   
 comments:
-  giscus: 
+  giscus:
     repo: arbobm/special_areas
+
 
