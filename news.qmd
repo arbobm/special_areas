@@ -1,6 +1,5 @@
----
-title: "📰 News"
----
+
+# 📰 News {.unnumbered}
 
 # Last updates
 
@@ -12,4 +11,4 @@ title: "📰 News"
 - Tables aesthetic
 - Make protected areas map update when filtering its table
 - How to deploy site for big countries (eg. Indonesia)
-- add number of KBAs sensitive sites to each country
+- add number of KBAs sensitive sites to each country.
