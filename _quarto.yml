@@ -1,27 +1,37 @@
 project:
   type: book
   output-dir: docs
+  
+date: '18 December 2025'
+date-format: DD-MM-YYYY
+date-modified: today
+published-title: Created
 
 book:
   title: "Special Areas for Bird Conservation"
   subtitle: 'KBAs and Protect Areas'
   # author: "Norah Jones"
   page-navigation: true
+  repo-url: https://https://github.com/arbobm/special_areas/
+  repo-actions: [edit]
+  downloads: [pdf, docx]
+  sharing: [linkedin]
   chapters:
     - index.qmd
     # - intro.qmd
-    - argentina.qmd
-    - philippines.qmd
-    - bangladesh.qmd
-    - cambodia.qmd
-    - ecuador.qmd
-    # - indonesia.qmd
-    - kazakhstan.qmd
-    - kyrgyzstan.qmd
-    - turkmenistan.qmd
+    - countries_qmd/argentina.qmd
+    - countries_qmd/philippines.qmd
+    - countries_qmd/bangladesh.qmd
+    - countries_qmd/cambodia.qmd
+    - countries_qmd/ecuador.qmd
+    # - countries_qmd/indonesia.qmd
+    - countries_qmd/kazakhstan.qmd
+    - countries_qmd/kyrgyzstan.qmd
+    - countries_qmd/turkmenistan.qmd
     # - summary.qmd
-    - news.qmd
     - references.qmd
+  appendices:
+    - news.qmd
 
 bibliography: 
   - references.bib
@@ -30,10 +40,6 @@ number-sections: false
 reference-location: margin
 citation-location: margin
 csl: templates/cambridge-journal-of-economics.csl
-date: '18 December 2025'
-date-format: DD-MM-YYYY
-date-modified: today
-published-title: Created
 
 format:
   html:
