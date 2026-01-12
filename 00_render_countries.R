@@ -36,7 +36,7 @@ for (i in 1:length(countries_list)) {
   message(country)
   
   # Paths
-  output <- paste0(str_to_lower(country), ".qmd")   # new file to write
+  output <- paste0('countries_qmd/', str_to_lower(country), ".qmd")   # new file to write
   
   # Read as text (lines)
   lines <- read_file(input)
