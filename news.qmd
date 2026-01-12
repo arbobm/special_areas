@@ -1,0 +1,12 @@
+---
+title: "News"
+---
+
+# Last updates
+
+
+# To-do list
+
+- Tables aesthetic
+- Make protected areas map update when filtering its table
+- How to deploy site for big countries (eg. Indonesia)

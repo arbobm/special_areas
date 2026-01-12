@@ -22,6 +22,7 @@ book:
     - kyrgyzstan.qmd
     - turkmenistan.qmd
     # - summary.qmd
+    - news.qmd
     - references.qmd
 
 bibliography: 
