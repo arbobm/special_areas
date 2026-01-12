@@ -3,12 +3,15 @@
 
 # Last updates
 
-- Added comments and reaction section (12/01/2026)
+- Add comments and reaction section (12/01/2026)
+- Add number of KBAs sensitive sites to each country (12/01/2026)
 
 
 # To-do list
 
 - Tables aesthetic
-- Make protected areas map update when filtering its table
 - How to deploy site for big countries (eg. Indonesia)
-- add number of KBAs sensitive sites to each country.
+- Add landcover and ebird points (recent or 10 years?)
+- Add version and year to the protected areas dataset citation
+- Make protected areas map update when filtering its table (it requires moving from github pages)
+

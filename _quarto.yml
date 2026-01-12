@@ -1,6 +1,7 @@
 project:
   type: book
   output-dir: docs
+
   
 date: '18 December 2025'
 date-format: DD-MM-YYYY
@@ -12,22 +13,19 @@ book:
   subtitle: 'KBAs and Protect Areas'
   # author: "Norah Jones"
   page-navigation: true
-  repo-url: https://https://github.com/arbobm/special_areas/
-  repo-actions: [edit]
-  downloads: [pdf, docx]
-  sharing: [linkedin]
+  repo-url: https://github.com/arbobm/special_areas/
   chapters:
     - index.qmd
     # - intro.qmd
-    - countries_qmd/argentina.qmd
-    - countries_qmd/philippines.qmd
-    - countries_qmd/bangladesh.qmd
-    - countries_qmd/cambodia.qmd
-    - countries_qmd/ecuador.qmd
-    # - countries_qmd/indonesia.qmd
-    - countries_qmd/kazakhstan.qmd
-    - countries_qmd/kyrgyzstan.qmd
-    - countries_qmd/turkmenistan.qmd
+    - argentina.qmd
+    - philippines.qmd
+    - bangladesh.qmd
+    - cambodia.qmd
+    - ecuador.qmd
+    # - indonesia.qmd
+    - kazakhstan.qmd
+    - kyrgyzstan.qmd
+    - turkmenistan.qmd
     # - summary.qmd
     - references.qmd
   appendices:

@@ -21,7 +21,7 @@ library(showtext)
 
 ## settings
 # set country
-# country_i <- 'Ecuador'
+# country_i <- 'Bangladesh'
 
 # set colours
 background_colour <- '#faf7f2'
@@ -29,7 +29,6 @@ background_colour <- '#faf7f2'
 # set fonts
 font_add_google("Work Sans", family = "worksans")
 showtext_auto()
-
 
 # read base data
 gadm <- geodata::gadm(
@@ -44,7 +43,7 @@ gadm <- geodata::gadm(
 raw_pa_data <- wdpa_fetch(
   x = country_i,
   wait = FALSE,
-  download_dir = "../wdpar"
+  download_dir = "wdpar"
 ) |>
   janitor::clean_names()
 
@@ -230,29 +229,57 @@ kbas_leaflet_c |>
   #   plot.background = element_rect(fill = background_colour),
   #   axis.title = element_text(family = 'worksans')
   # )
+
+kbas_sensitive <- readxl::read_xlsx('tables/nkbas_countries.xlsx') |> 
+  janitor::clean_names()
+
+
+sensi_sites <- kbas_sensitive |> 
+  filter(country_name == country_i)
+
+if (nrow(sensi_sites) == 0) {
+  n_sensi <- 0
+} else {
+  n_sensi <- paste0(sensi_sites$count_ofconfsites - sensi_sites$count_ofpublsites, ' (TBC if triggered by birds)')
+}
+
+
 ```
 
 ::::: {.grid}
 
-:::: {.g-col-6}
+:::: {.g-col-4}
 
 ::: {.callout-note appearance="minimal"}
 
-### Total number of KBAs
+### Total number of public KBAs
 
-`r n_kbas` 
+- `r n_kbas` 
 
 :::
-    
+
 ::::
 
-:::: {.g-col-6}
+:::: {.g-col-4}
 
 ::: {.callout-note appearance="minimal"}
 
-### Number of KBAs with Birds
+### Number of public KBAs with Birds
 
-`r n_kba_birds`
+- `r n_kba_birds`
+
+:::
+
+::::
+
+:::: {.g-col-4}
+
+::: {.callout-note appearance="minimal"}
+
+### Number of sensitive KBAs
+
+- `r n_sensi`
+- [Open spreadsheet](https://birdlife-my.sharepoint.com/:x:/g/personal/bruna_arbo-meneses_birdlife_org/IQCF4kCGdgz_Raff7q-zJCWlAQFL0JbzU1uGGa3Pt8YrPOk?e=GbkNRV) to confirm.
 
 :::
 
