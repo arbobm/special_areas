@@ -21,7 +21,7 @@ library(showtext)
 
 ## settings
 # set country
-# 'Bangladesh' <- 'Bangladesh'
+# 'Bangladesh' <- 'Argentina'
 
 # set colours
 background_colour <- '#faf7f2'
@@ -168,7 +168,7 @@ kba_3 <- kbas_2 |>
   )
 
 
-kba_3$triggered_by <- str_remove_all(kba_3$triggered_by, 'none|, ')
+kba_3$triggered_by <- str_remove_all(kba_3$triggered_by, 'none, |none')
 
 # kba_3 |>
 #   count(contain, triggered_by_birds)
@@ -279,7 +279,7 @@ if (nrow(sensi_sites) == 0) {
 ### Number of sensitive KBAs
 
 - `r n_sensi`
-- [Open spreadsheet](https://birdlife-my.sharepoint.com/:x:/g/personal/bruna_arbo-meneses_birdlife_org/IQCF4kCGdgz_Raff7q-zJCWlAQFL0JbzU1uGGa3Pt8YrPOk?e=GbkNRV) to confirm.
+  - [Open spreadsheet](https://birdlife-my.sharepoint.com/:x:/g/personal/bruna_arbo-meneses_birdlife_org/IQCF4kCGdgz_Raff7q-zJCWlAQFL0JbzU1uGGa3Pt8YrPOk?e=GbkNRV) to confirm.
 
 :::
 
